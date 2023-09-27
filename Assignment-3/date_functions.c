@@ -268,8 +268,9 @@ void weekly_reminders(int start_year, int start_month, int start_day, int number
         printf("%04d-%02d-%02d\n", year, month, day);
         day = day + 7; 
         if(day > days_in_month(year, month)){
+            day = day - days_in_month(year, month);
             month++;
-            day = day - days_in_month(year, month); //shouldve made a var for days in month
+            
             if(month > 12){
                 month = month - 12;
                 year++;
@@ -417,7 +418,7 @@ int main(){
     //Remember to add more tests for the edge cases
 
 
-
+    
 
 
 
@@ -507,6 +508,8 @@ int main(){
 
 
     /* Your code here */
+
+    
 
     return 0;
 }
