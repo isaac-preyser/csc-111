@@ -139,7 +139,7 @@ int days_in_month(int year, int month_number){
 */
 int date_valid(int year, int month_number, int day){
     /* Your code here */
-    if (year < 1){return 0;}
+    if (year <= 0){return 0;}
     if (month_number > 12 || month_number < 1){ return 0;}
     if (day > days_in_month(year, month_number)){ return 0; }
     
@@ -284,7 +284,7 @@ void weekly_reminders(int start_year, int start_month, int start_day, int number
 
 
 
-int main(){
+ int main(){
 
     /* The code in main() will not be marked (we will replace your main() with 
        our own code for testing). The code below does some basic testing of the 
@@ -439,8 +439,8 @@ int main(){
 
     //Remember to add more tests for the edge cases
 
-
-
+    result = chronological_order(1, 1, 1, 2, 2, 2); //Should be -2
+    printf("chronological_order(0,0,0,0, 1, 1, 1, 1): %d\n", result );
 
 
 
@@ -508,9 +508,9 @@ int main(){
 
 
     /* Your code here */
-
-    
-
+    result = day_index(2024, 3, 1);
+    printf("day index of 2024-03-01 is %d\n", result);
+    //everything should work. 
     return 0;
 }
 
