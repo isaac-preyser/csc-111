@@ -11,16 +11,16 @@ int main(){
     /* You may modify the values of each variable below, but DO NOT
         rename the variables, change their types or move the declarations. */
 
-    int abacus_value = 2023;
-    int largest_group = 1000; 
+    long long int abacus_value = 3402845806450;
+    long long int largest_group = 100000000000; 
 
     /* END OF INPUT DATA */
     /* Implement your solution below this line */
-    int j; //number of beads we are gonna print
-    for(int g = largest_group; g > 0; g = g / 10){
+    long long int j; //number of beads we are gonna print
+    for(long long int g = largest_group; g > 0; g = g / 10){
         j = abacus_value / g; //how many X's can we print per step of the abacus we are on? 
         abacus_value = abacus_value % g; //what we have left over after printing the abacus line
-        printf("%d: ",g);
+        printf("%lld: ",g);
         while( j > 0 ){
             printf("X");
             j--;
