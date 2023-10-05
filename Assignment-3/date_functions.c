@@ -38,6 +38,7 @@ int is_leap_year(int year){
 */
 int days_in_year(int year){
     /* Your code here */
+    if (year <= 0) { return -1; }
     if (is_leap_year(year) == 1) { return 366; }
     return 365; 
 
@@ -508,8 +509,8 @@ void weekly_reminders(int start_year, int start_month, int start_day, int number
 
 
     /* Your code here */
-    result = day_index(2024, 3, 1);
-    printf("day index of 2024-03-01 is %d\n", result);
+    //result = day_index(2024, 3, 1);
+   // printf("day index of 2024-03-01 is %d\n", result);
     //everything should work. 
     return 0;
 }
