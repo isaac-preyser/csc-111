@@ -63,6 +63,8 @@ int days_in_year(int year){
 int days_in_month(int year, int month_number){
     /* Your code here */
     //time for a big big switch statement lmao
+    if(month_number > 12 || month_number < 1) { return -1; }
+    
     switch(month_number){
         case 1:
             //jan
@@ -114,7 +116,7 @@ int days_in_month(int year, int month_number){
             return 31; 
             break;
         default: 
-            return 0;
+            return -1;
     }         
     
     
@@ -143,7 +145,7 @@ int date_valid(int year, int month_number, int day){
     if (year <= 0){return 0;}
     if (month_number > 12 || month_number < 1){ return 0;}
     if (day > days_in_month(year, month_number)){ return 0; }
-    
+    if (day < 1){ return 0; }
     return 1;
 }
 
@@ -160,9 +162,10 @@ int date_valid(int year, int month_number, int day){
 */
 int day_index(int year, int month_number, int day){
     /* Your code here */
+    if(date_valid(year, month_number, day) == 0) { return -1; }
     int index =  0;
     for (int i = 1; i < month_number; i++){
-        index += days_in_month(year, i);
+        index += days_in_month(year, i); 
     }
     index += day;
     return index;
@@ -201,7 +204,7 @@ int chronological_order(int year1, int month1, int day1, int year2, int month2, 
     //why not use an array or list<t> 
     // f it we ball 
     int date1_valid = date_valid(year1, month1, day1);
-    int date2_valid = date_valid(year1, month2, day2);
+    int date2_valid = date_valid(year2, month2, day2);
     //please let us use boolean for these man it hurts me 
     
     if(date1_valid == 0 || date2_valid == 0) { return -2; }
@@ -265,6 +268,10 @@ void weekly_reminders(int start_year, int start_month, int start_day, int number
     int year = start_year; 
     int month = start_month;
     int day = start_day; 
+    if (date_valid(year, month, day) == 0 || number_of_reminders <= 0){
+        printf("Error: Invalid Parameters\n");
+        return;
+    }
     for(int i = 0; i < number_of_reminders; i++){
         printf("%04d-%02d-%02d\n", year, month, day);
         day = day + 7; 
@@ -284,235 +291,29 @@ void weekly_reminders(int start_year, int start_month, int start_day, int number
 
 
 
+int main(){
 
- int main(){
+    printf("Output of weekly_reminders(2024, 2, 29, 2):\n");
+    weekly_reminders(2024, 2, 29, 2);
+    printf("\n");
 
-    /* The code in main() will not be marked (we will replace your main() with 
-       our own code for testing). The code below does some basic testing of the 
-       functions above, but we will use different test cases for marking,
-       so you should add extra tests to verify your code.
+    printf("Output of weekly_reminders(2023, 2, 29, 2):\n");
+    weekly_reminders(2023, 2, 29, 2);
+    printf("\n");
 
-       Remember to test unusual or "edge" cases as well as normal inputs.
-       For example, make sure to test the behavior of each function 
-       on invalid dates (not just valid ones).
+    printf("Output of weekly_reminders(2023, 10, 8, 0):\n");
+    weekly_reminders(2023, 10, 8, 0);
+    printf("\n");
 
-       Although we will substitute our own code in main() for testing, you
-       are still required to ensure that the code in your main() function
-       compiles as submitted.
-     */
+    printf("Output of weekly_reminders(2015, 4, 31, 2):\n");
+    weekly_reminders(2015, 4, 31, 2);
+    printf("\n");
 
-    int result;
-
-    /* Test is_leap_year */
-    
-    result = is_leap_year(2023); //Should be 0
-    printf("is_leap_year(2023): %d\n", result );
-
-    result = is_leap_year(2020); //Should be 1
-    printf("is_leap_year(2020): %d\n", result );
-
-    result = is_leap_year(1600); //Should be 1
-    printf("is_leap_year(1600): %d\n", result );
-
-    result = is_leap_year(1700); //Should be 0
-    printf("is_leap_year(1700): %d\n", result );
-
-    result = is_leap_year(1870); //Should be 0
-    printf("is_leap_year(1870): %d\n", result );
-
-
-
-
-
-
-
-    /* Test days_in_year */
-
-    result = days_in_year(2023); //Should be 365
-    printf("days_in_year(2023): %d\n", result );
-
-    result = days_in_year(2020); //Should be 366
-    printf("days_in_year(2020): %d\n", result );
-
-    result = days_in_year(1600); //Should be 366
-    printf("days_in_year(1600): %d\n", result );
-
-    result = days_in_year(1700); //Should be 365
-    printf("days_in_year(1700): %d\n", result );
-
-    result = days_in_year(1870); //Should be 365
-    printf("days_in_year(1870): %d\n", result );
-
-
-
-
-
-
-
-    /* Test days_in_month */
-
-    result = days_in_month(2023, 1); //Should be 31
-    printf("days_in_month(2023, 1): %d\n", result );
-
-    result = days_in_month(2023, 2); //Should be 28
-    printf("days_in_month(2023, 2): %d\n", result );
-
-    result = days_in_month(2023, 4); //Should be 30
-    printf("days_in_month(2023, 4): %d\n", result );
-
-    result = days_in_month(2020, 2); //Should be 29
-    printf("days_in_month(2020, 2): %d\n", result );
-
-    result = days_in_month(1999, 3); //Should be 31
-    printf("days_in_month(1999, 3): %d\n", result );
-
-    result = days_in_month(2006, 2); //Should be 28
-    printf("days_in_month(2006, 2): %d\n", result );
-
-    //Remember to add more tests for the edge cases (e.g. when days_in_month returns -1)
-
-
-
-
-
-
-
-    /* Test date_valid */
-
-    result = date_valid(2023, 1, 11); //Should be 1
-    printf("date_valid(2023, 1, 11): %d\n", result );
-
-    result = date_valid(2023, 2, 29); //Should be 0
-    printf("date_valid(2023, 2, 29): %d\n", result );
-
-    result = date_valid(2020, 2, 29); //Should be 1
-    printf("date_valid(2020, 2, 29): %d\n", result );
-
-    result = date_valid(2023, 1, 87); //Should be 0
-    printf("date_valid(2023, 1, 87): %d\n", result );
-
-    result = date_valid(2023, 6, 31); //Should be 0
-    printf("date_valid(2023, 6, 31): %d\n", result );
-
-    //Remember to add more tests for the edge cases
-
-
-
-
-
-
-
-    /* Test day_index */
-
-    result = day_index(2023, 6, 10); //Should be 161
-    printf("day_index(2023, 6, 10): %d\n", result );
-
-    result = day_index(2023, 10, 6); //Should be 279
-    printf("day_index(2023, 10, 6): %d\n", result );
-
-    result = day_index(2016, 6, 10); //Should be 162
-    printf("day_index(2016, 6, 10): %d\n", result );
-
-    result = day_index(2012, 10, 6); //Should be 280
-    printf("day_index(2012, 10, 6): %d\n", result );
-
-    //Remember to add more tests for the edge cases
-
+    printf("Output of weekly_reminders(2023, 3, 31, -2):\n");
+    weekly_reminders(2023, 3, 31, -2);
+    printf("\n");
 
     
 
-
-
-
-    /* Test chronological_order */
-
-    result = chronological_order(2021, 10, 6, 2023, 6, 10); //Should be -1
-    printf("chronological_order(2021, 10, 6, 2023, 6, 10): %d\n", result );
-
-    result = chronological_order(2023, 10, 6, 2023, 6, 10); //Should be 1
-    printf("chronological_order(2023, 10, 6, 2023, 6, 10): %d\n", result );
-
-    result = chronological_order(2023, 6, 10, 2023, 6, 10); //Should be 0
-    printf("chronological_order(2023, 6, 10, 2023, 6, 10): %d\n", result );
-
-    result = chronological_order(2021, 6, 10, 2021, 6, 31); //Should be -2
-    printf("chronological_order(2021, 6, 10, 2021, 6, 31): %d\n", result );
-
-    //Remember to add more tests for the edge cases
-
-    result = chronological_order(1, 1, 1, 2, 2, 2); //Should be -2
-    printf("chronological_order(0,0,0,0, 1, 1, 1, 1): %d\n", result );
-
-
-
-
-    /* Test weekly_reminders */
-
-    /* The function call below should generate the following dates:
-        2023-09-01
-        2023-09-08
-        2023-09-15
-        2023-09-22
-        2023-09-29
-        2023-10-06
-        2023-10-13
-        2023-10-20
-        2023-10-27
-        2023-11-03
-        2023-11-10
-        2023-11-17
-        2023-11-24
-        2023-12-01
-    */
-    printf("Output of weekly_reminders(2023, 9, 1, 14):\n");
-    weekly_reminders(2023, 9, 1, 14);
-    printf("\n");
-
-
-    /* The function call below should generate the following dates:
-        2023-02-25
-        2023-03-04
-        2023-03-11
-        2023-03-18
-        2023-03-25
-        2023-04-01
-        2023-04-08
-    */
-    printf("Output of weekly_reminders(2023, 2, 25, 7):\n");
-    weekly_reminders(2023, 2, 25, 7);
-    printf("\n");
-
-    /* The function call below should generate the following dates:
-        2024-02-25
-        2024-03-03
-        2024-03-10
-        2024-03-17
-        2024-03-24
-        2024-03-31
-        2024-04-07
-    */
-    printf("Output of weekly_reminders(2024, 2, 25, 7):\n");
-    weekly_reminders(2024, 2, 25, 7);
-    printf("\n");
-
-    /* The function call below should generate the following dates:
-        2023-12-20
-        2023-12-27
-        2024-01-03
-        2024-01-10
-    */
-    printf("Output of weekly_reminders(2023, 12, 20, 4):\n");
-    weekly_reminders(2023, 12, 20, 4);
-    printf("\n");
-
-    //Remember to add more tests for the edge cases
-
-
-    /* Your code here */
-    //result = day_index(2024, 3, 1);
-   // printf("day index of 2024-03-01 is %d\n", result);
-    //everything should work. 
     return 0;
 }
-
-
