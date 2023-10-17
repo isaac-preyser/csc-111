@@ -26,8 +26,9 @@ int main() {
 
     /* Task 4: Use p to set x to -50, then reset p to point at y. */
 
-    *p = -50;
-    p = &y; 
+    *p = -50; //wherever p is pointing (in this case x), set it to -50. 
+    p = &y; //p now points at y. notice the syntax here. read the '&' as "address of", or "pointer to". 
+            //whenever we write *p, think of it as "the value at the address p is pointing to (the value of whatever it's pointing at)".
 
     printf("Task 4: x = %d, y = %d, *p = %d\n", x, y, *p);
 
@@ -43,7 +44,9 @@ int main() {
     /* Task 6: Using only the variables p and q, 
        copy the value of x into y. */
 
-    *p = *q;
+    *p = *q; //set the value at the address p is pointing to (y) to the value at the address q is pointing to (x)
+            //so, set y to the value of x
+            //aka: set star-p to the value of star-q
     
     printf("Task 6: x = %d, y = %d, *p = %d, *q = %d\n", x, y, *p, *q);
 

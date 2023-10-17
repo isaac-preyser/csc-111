@@ -17,8 +17,8 @@ int main() {
     /* Task 1: Create a pointer p and set it to point to x */
 
 
-    int* p;
-    p = &x;
+    int* p; //p is a pointer to an int
+    p = &x; //p now points to x. &x is the address of x
     
     printf("Task 1: x = %d, y = %d, *p = %d\n", x, y, *p);
     
