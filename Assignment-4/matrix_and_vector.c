@@ -105,5 +105,75 @@ void transpose(int n, int k, double A[n][k], double T[k][n]) {
 }
 
 void omit_row(int n, int k, double A[n][k], double B[n-1][k], int omit_idx){
-    
+    int skipped = 0;
+    for (int i = 0; i < n; i++){
+        if (i == omit_idx){
+            continue;
+            skipped = 1; 
+        } else{
+            for (int j = 0; j < k; j++){
+                if(skipped){
+                    B[n-1][k] = A[n][k];
+                } else{
+                    B[n][k] = A[n][k];
+                }
+            }
+        }
+    }
+}
+
+void omit_column(int n, int k, double A[n][k], double B[n][k-1], int omit_idx){
+    int skipped = 0;
+    for (int i = 0; i < k; i++){
+        if (i == omit_idx){
+            continue;
+            skipped = 1; 
+        } else{
+            for (int j = 0; j < n; j++){
+                if(skipped){
+                    B[n][k-1] = A[n][k];
+                } else{
+                    B[n][k] = A[n][k];
+                }
+            }
+        }
+    }
+}
+void outer_product(int n, int m, double V1[n], double V2[m], double M[n][m]){
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < m; j++){
+            M[i][j] = V1[i] * V2[j]; //multiply the two vectors together and store the result in the output matrix
+        }
+    }
+    return;
+}
+
+void circulant(int n, double A[n][n], double V[n]){
+  int shift = 0; 
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            if (j + shift >= n){
+                A[i][j] = V[j + shift - n]; //if the index is greater than the size of the matrix, subtract the size of the matrix from the index
+            } else{
+                A[i][j] = V[j + shift]; //otherwise, just add the shift to the index
+            }
+        }
+        shift++; //increment the shift
+    }
+}
+
+void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vout[n]){
+    return;
+}
+
+void matrix_multiply(int m, int n, int k, double A[m][n], double B[n][k], double C[m][k]){
+    return;
+}
+
+void set_vector(int n, double V[n], double s){
+    return;
+}
+
+void mul_vector_by_scalar(int n, double Vin[n], double Vout[n], double s){
+    return;
 }
