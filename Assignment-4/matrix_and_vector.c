@@ -3,7 +3,7 @@
 #include <math.h>
 #include "matrix_and_vector.h"
 
-
+//gcc -Wall -std=c18 -o vector_tester vector_tester.c matrix_and_vector.c -lm
 
 //implment dot product function
 
@@ -163,17 +163,43 @@ void circulant(int n, double A[n][n], double V[n]){
 }
 
 void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vout[n]){
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < k; j++){
+            Vout[i] = A[i][j] * V[j]; //multiply the matrix by the vector and store the result in the output vector
+        }
+    }
+    
+    
     return;
 }
 
 void matrix_multiply(int m, int n, int k, double A[m][n], double B[n][k], double C[m][k]){
+    
+    for (int i = 0; i < m; i++){
+        for (int j = 0; j < k; j++){
+            for (int l = 0; l < n; l++){
+                C[i][j] += A[i][l] * B[l][j]; //multiply the two matrices together and store the result in the output matrix
+            }
+        }
+
+    }
+    
+    
+    
     return;
 }
 
 void set_vector(int n, double V[n], double s){
+    for (int i = 0; i < n; i++){
+        V[i] = s; //set all values in the vector to the value of s
+    }
+    
     return;
 }
 
 void mul_vector_by_scalar(int n, double Vin[n], double Vout[n], double s){
+    for (int i = 0; i < n; i++){
+        Vout[i] = Vin[i] * s; //multiply the vector by the scalar and store the result in the output vector
+    }
     return;
 }

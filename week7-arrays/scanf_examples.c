@@ -17,9 +17,15 @@ int main() {
     printf("Enter three numbers: ");
 
     /* Read them all together */
-    
+    if(scanf("%d %d %d", &v1, &v2, &v3) != 3){
+        printf("Error: Could not read three numbers\n");
+        return 1;
+    }
 
     /* Read them one at a time */
+    // scanf("%d", &v1);
+    // scanf("%d", &v2);
+    // scanf("%d", &v3);
 
     printf("Values: %d %d %d\n", v3, v2, v1);
 

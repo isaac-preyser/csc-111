@@ -97,5 +97,15 @@ int main(){
     print_vector(6, Q);
     printf("\n");
 
+
+    printf("Testing matrix_vector_multiply:\n");
+    double M1[2][2] = {{1,2},{3,4}};
+    double M2[2][2] = {{1,0},{0,1}};
+    matrix_multiply(2, 2, 2, M1, M2, Q);
+    for (int i = 0; i < 2; i++){
+        for (int j = 0; j < 2; j++)
+            printf("%.2f ", Q[i][j]);
+    }
+    printf("\n");
     return 0;
 }
