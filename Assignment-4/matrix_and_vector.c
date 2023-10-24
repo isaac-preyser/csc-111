@@ -149,17 +149,22 @@ void outer_product(int n, int m, double V1[n], double V2[m], double M[n][m]){
 }
 
 void circulant(int n, double A[n][n], double V[n]){
-  int shift = 0; 
+    
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
-            if (j + shift >= n){
-                A[i][j] = V[j + shift - n]; //if the index is greater than the size of the matrix, subtract the size of the matrix from the index
-            } else{
-                A[i][j] = V[j + shift]; //otherwise, just add the shift to the index
-            }
+           A[i][j] = V[j];
         }
-        shift++; //increment the shift
+    //shift all the values in V to the right by 1, and moving the last value to the beginning
+    double temp = V[n-1];
+    for (int i = n-1; i > 0; i--){
+        V[i] = V[i-1];
     }
+    V[0] = temp;
+    }
+    return;
+
+
+
 }
 
 void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vout[n]){

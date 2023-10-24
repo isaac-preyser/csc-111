@@ -148,6 +148,54 @@ assert(non_zero_result[0] == V[0] + non_zero_vector[0] && non_zero_result[1] == 
         printf("\n");
     }
 
+
+    // Print result vector
+    printf("Result vector:\n");
+    for (int i = 0; i < 3; i++) {
+        printf("%f\t", result[i]);
+        printf("\n");
+    }
+
+    // Test circulant with zero vector
+    double zero_vec[3] = {0, 0, 0};
+    double zero_mat[3][3];
+    circulant(3, zero_mat, zero_vec);
+    printf("test matrix (zeros):\n");
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            printf("%f\t", zero_mat[i][j]);
+        }
+        printf("\n");
+    }
+    // Test circulant with non-zero vector
+    double non_zero_vec[3] = {1, 2, 3};
+    double non_zero_mat[3][3];
+    circulant(3, non_zero_mat, non_zero_vec);
+    
+
+printf("test matrix:\n");
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            printf("%f\t", non_zero_mat[i][j]);
+        }
+        printf("\n");
+    }
+
+
+   // assert(non_zero_mat[1][0] == 2 && non_zero_mat[1][1] == 1 && non_zero_mat[1][2] == 3);
+    //assert(non_zero_mat[2][0] == 3 && non_zero_mat[2][1] == 2 && non_zero_mat[2][2] == 1);
+
+    // Test circulant with repeated values in vector
+    double repeated_vec[4] = {1, 2, 1, 1};
+    double repeated_mat[4][4];
+    circulant(4, repeated_mat, repeated_vec);
+    printf("test matrix (repeated values):\n");
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            printf("%f\t", repeated_mat[i][j]);
+        }
+        printf("\n");
+    }
     printf("Testing matrix_vector_multiply:\n");
 
     int row1, col1, row2, col2;
