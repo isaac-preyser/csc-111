@@ -99,13 +99,52 @@ int main(){
 
 
     printf("Testing matrix_vector_multiply:\n");
-    double M1[2][2] = {{1,2},{3,4}};
-    double M2[2][2] = {{1,0},{0,1}};
-    matrix_multiply(2, 2, 2, M1, M2, Q);
-    for (int i = 0; i < 2; i++){
-        for (int j = 0; j < 2; j++)
-            printf("%.2f ", Q[i][j]);
+
+    int row1, col1, row2, col2;
+
+    // Input dimensions of the first matrix
+    printf("Enter the number of rows and columns of the first matrix: ");
+    scanf("%d %d", &row1, &col1);
+
+    // Input dimensions of the second matrix
+    printf("Enter the number of rows and columns of the second matrix: ");
+    scanf("%d %d", &row2, &col2);
+
+    // Check if matrix multiplication is possible
+    if (col1 != row2) {
+        printf("Matrix multiplication is not possible. Column of the first matrix must be equal to the row of the second matrix.\n");
+        return 1;
     }
-    printf("\n");
+
+    double firstMatrix[row1][col1], secondMatrix[row2][col2], resultMatrix[row1][col2];
+    printf("Enter the elements of the first matrix:\n");
+        for (int i = 0; i < row1; i++) {
+            for (int j = 0; j < col1; j++) {
+                scanf("%lf", &firstMatrix[i][j]);
+            }
+        }
+    printf("Enter the elements of the second matrix:\n");
+        for (int i = 0; i < row2; i++) {
+            for (int j = 0; j < col2; j++) {
+                scanf("%lf", &secondMatrix[i][j]);
+            }
+        }
+    // Initialize the result matrix with zeros
+    for (int i = 0; i < row1; i++) {
+        for (int j = 0; j < col2; j++) {
+            resultMatrix[i][j] = 0;
+        }
+    }
+
+    matrix_multiply(row1, col1, col2, firstMatrix, secondMatrix, resultMatrix);
+    // Display the result matrix
+    printf("Resultant matrix:\n");
+    for (int i = 0; i < row1; i++) {
+        for (int j = 0; j < col2; j++) {
+            printf("%f\t", resultMatrix[i][j]);
+        }
+        printf("\n");
+    }
+    
     return 0;
 }
