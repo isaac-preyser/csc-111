@@ -163,9 +163,13 @@ void circulant(int n, double A[n][n], double V[n]){
 }
 
 void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vout[n]){
+    for (int i = 0; i < k; i++){
+        Vout[i] = 0;
+    }
+    
     for (int i = 0; i < n; i++){
         for (int j = 0; j < k; j++){
-            Vout[i] = A[i][j] * V[j]; //multiply the matrix by the vector and store the result in the output vector
+            Vout[i] += A[i][j] * V[j]; //multiply the matrix by the vector and store the result in the output vector
         }
     }
     
