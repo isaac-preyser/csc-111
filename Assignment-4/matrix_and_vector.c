@@ -154,12 +154,12 @@ void circulant(int n, double A[n][n], double V[n]){
         for (int j = 0; j < n; j++){
            A[i][j] = V[j];
         }
-    //shift all the values in V to the right by 1, and moving the last value to the beginning
-    double temp = V[n-1];
-    for (int i = n-1; i > 0; i--){
-        V[i] = V[i-1];
-    }
-    V[0] = temp;
+        //shift all the values in V to the right by 1, and moving the last value to the beginning
+        double temp = V[n-1];
+        for (int i = n-1; i > 0; i--){
+            V[i] = V[i-1];
+        }
+        V[0] = temp;
     }
     return;
 
@@ -184,6 +184,12 @@ void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vo
 
 void matrix_multiply(int m, int n, int k, double A[m][n], double B[n][k], double C[m][k]){
     
+    for (int i = 0; i < m; i++){
+        for (int j = 0; j < k; j++){
+            C[i][j] = 0; //set everything in C to zero, just in case we get a matrix that isn't already zero.
+        }
+    }
+
     for (int i = 0; i < m; i++){
         for (int j = 0; j < k; j++){
             for (int l = 0; l < n; l++){
