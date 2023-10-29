@@ -68,9 +68,6 @@ int matrices_equal(int rows, int cols, double A[rows][cols], double B[rows][cols
 }
 
 void add_matrices(int rows, int cols, double A[rows][cols], double B[rows][cols], double C[rows][cols]){
-    if (matrices_equal(rows, cols, A, B) == 0){ //if the two matrices are not the same size, return
-        return;
-    }
     /*
     for (int i = 0; i < rows; i++){
         for(int j = 0; j < cols; j++){
@@ -105,36 +102,49 @@ void transpose(int n, int k, double A[n][k], double T[k][n]) {
 }
 
 void omit_row(int n, int k, double A[n][k], double B[n-1][k], int omit_idx){
-    int skipped = 0;
+    int skipped = 0; //boolean value
     for (int i = 0; i < n; i++){
+        //looping over every row
         if (i == omit_idx){
+            //if we're on the row we want to omit, set skipped to 1 and continue
+            skipped = 1;
             continue;
-            skipped = 1; 
-        } else{
+        }
+        if (skipped){
+            //if skipped is true, we want to set the value of the output matrix to the value of the input matrix, but shifted down by one
             for (int j = 0; j < k; j++){
-                if(skipped){
-                    B[n-1][k] = A[n][k];
-                } else{
-                    B[n][k] = A[n][k];
-                }
+                //fill the column, shifted down by one
+                B[i-1][j] = A[i][j];
+            }
+        } else {
+            //if we get here, then we haven't skipped a row yet - so we want to set the value of the output matrix to the value of the input matrix
+            for (int j = 0; j < k; j++){
+                //fill the column as normal. 
+                B[i][j] = A[i][j];
             }
         }
+
     }
 }
 
 void omit_column(int n, int k, double A[n][k], double B[n][k-1], int omit_idx){
-    int skipped = 0;
-    for (int i = 0; i < k; i++){
-        if (i == omit_idx){
+    int skipped = 0; 
+    for (int j = 0; j < k; j++){
+        //this is the column loop
+        if (j == omit_idx){
+            //if we're on the column we want to omit, set skipped to 1 and continue
+            skipped = 1;
             continue;
-            skipped = 1; 
-        } else{
-            for (int j = 0; j < n; j++){
-                if(skipped){
-                    B[n][k-1] = A[n][k];
-                } else{
-                    B[n][k] = A[n][k];
-                }
+        }
+        //if we have skipped, then fill in the output matrix with the value of the input matrix, but shifted over by one
+        if (skipped){
+            for (int i = 0; i < n; i++){
+                B[i][j-1] = A[i][j];
+            }
+        } else {
+            //if we haven't skipped, then fill in the output matrix with the value of the input matrix
+            for (int i = 0; i < n; i++){
+                B[i][j] = A[i][j];
             }
         }
     }
@@ -154,12 +164,23 @@ void circulant(int n, double A[n][n], double V[n]){
         for (int j = 0; j < n; j++){
            A[i][j] = V[j];
         }
-        //shift all the values in V to the right by 1, and moving the last value to the beginning
-        double temp = V[n-1];
-        for (int i = n-1; i > 0; i--){
-            V[i] = V[i-1];
+        
+        //shift all the values in V to the left by 1, and moving the first value to the end
+        double temp = V[0];
+        for (int i = 0; i < n-1; i++){
+            V[i] = V[i+1];
         }
-        V[0] = temp;
+        V[n-1] = temp;
+
+        
+        
+        
+        // //shift all the values in V to the right by 1, and moving the last value to the beginning
+        // double temp = V[n-1];
+        // for (int i = n-1; i > 0; i--){
+        //     V[i] = V[i-1];
+        // }
+        // V[0] = temp;
     }
     return;
 
@@ -169,15 +190,22 @@ void circulant(int n, double A[n][n], double V[n]){
 
 void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vout[n]){
     for (int i = 0; i < k; i++){
-        Vout[i] = 0;
+        Vout[i] = 0; //make sure Vout is all zeros
     }
     
+    //take the dot product of each row of A with V and store the result in Vout
     for (int i = 0; i < n; i++){
+        double sum = 0;
         for (int j = 0; j < k; j++){
-            Vout[i] += A[i][j] * V[j]; //multiply the matrix by the vector and store the result in the output vector
+            sum += A[i][j] * V[j];
         }
+        Vout[i] = sum;
     }
+
     
+
+    //something in the math isnt mathing
+
     
     return;
 }
@@ -192,14 +220,14 @@ void matrix_multiply(int m, int n, int k, double A[m][n], double B[n][k], double
 
     for (int i = 0; i < m; i++){
         for (int j = 0; j < k; j++){
-            for (int l = 0; l < n; l++){
-                C[i][j] += A[i][l] * B[l][j]; //multiply the two matrices together and store the result in the output matrix
-            }
+           //do the dot product of the ith row of A and the jth column of B
+              for (int l = 0; l < n; l++){
+                C[i][j] += A[i][l] * B[l][j];
+              }
         }
-
     }
-    
-    
+
+
     
     return;
 }
