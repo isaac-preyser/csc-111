@@ -23,7 +23,10 @@ double norm(int n, double V[n]){
 }
 
 double angle_between_vectors(int n, double V1[n], double V2[n]) {
-    
+    if (norm(n, V1) == 0 || norm(n, V2) == 0){
+        //if either of the vectors have a length of 0, return -1
+        return -1;
+    }
     //return the angle between two vectors, which is the inverse cosine of the quotient of the dot product of the two vectors divided by the product of the length of the two vectors
     return acos(dot_product(n, V1, V2) / (norm(n, V1) * norm(n, V2)));
 }
@@ -192,14 +195,19 @@ void matrix_vector_multiply(int n, int k, double A[n][k], double V[k], double Vo
     for (int i = 0; i < k; i++){
         Vout[i] = 0; //make sure Vout is all zeros
     }
-    
+    double sum = 0;
     //take the dot product of each row of A with V and store the result in Vout
     for (int i = 0; i < n; i++){
-        double sum = 0;
+        if (V[i] == INFINITY){
+            //if any of the values in V are infinity, then the result is infinity
+            Vout[i] = INFINITY;
+            continue;
+        }
         for (int j = 0; j < k; j++){
             sum += A[i][j] * V[j];
         }
         Vout[i] = sum;
+        sum = 0;
     }
 
     
