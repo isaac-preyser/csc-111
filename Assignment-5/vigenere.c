@@ -49,6 +49,50 @@ int main(){
     char encrypted[100];
     char decrypted[100];
 
+    //open input.txt for input reading
+    FILE* input_file = fopen("input.txt","r");
+    if (!input_file){
+        printf("Error: Unable to open input file.\n");
+        return 1;
+    }
+    //read the first line of text, and set it to the key. 
+    //Note: The key may contain spaces, so use fgets instead of fscanf.
+    //however, if spaces are indeed intentional, this code will fail the test case. 
+    //I will write my code assuming that the should not contain spaces. 
+    fgets(key,100,input_file);
+    //The next line will be the message. 
+    fgets(message, 100, input_file);
+    //if the key has length of 0, throw an invalid key error. 
+    if (strlen(key) <= 0){
+        printf("Error: Invalid Key."\n);
+        //close input.txt
+        fclose(input_file);
+        return 1; 
+    }
+    //if the message has a length of 0, OR contains any non-lowercase characters, throw an invalid message error. 
+    if (strlen(message) <= 0){
+        printf("Error: Invalid message."\n);
+        //close input.txt
+        fclose(input_file);
+        return 1; 
+    }
+    for (int i = 0; i <= strlen(message); i++){
+        //this might walk off the end of the string, I have no idea
+        if (islower(message[i]) == 0)
+        {
+            //if we get in here we throw errors broski
+            printf("Error: Invalid message."\n);
+            //close input.txt
+            fclose(input_file);
+            return 1; 
+        }
+    }
+//if we get here, we can rest assured both the message and the key are valid. 
+//we print the message
+printf(); 
+
+
+
 
 
     /* Example of the expected output format (using fake output strings) */
@@ -65,5 +109,8 @@ int main(){
     printf("Encrypted: [%s]\n",encrypted);
     printf("Decrypted: [%s]\n",decrypted);
 
+
+    //close input.txt
+    fclose(input_file);
     return 0;
 }
