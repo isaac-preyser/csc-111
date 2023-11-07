@@ -89,7 +89,7 @@ int main(){
         if (islower(message[i]) == 0)
         {
             //if we get in here we throw errors broski
-            printf("Error: b Invalid message. Character [%c], on index %d, is invalid.\n", message[i], i);
+            printf("Error: Invalid message.\n");
             //close input.txt
             fclose(input_file);
             return 1; 
