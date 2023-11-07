@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
+#include <stdlib.h>
 
 /* index_to_character(index)
    Given an index, which MUST be in the range 0 through 25 (inclusive), return
@@ -41,46 +43,47 @@ int character_to_index(char ch){
     return ch - 'a';
 }
 
+void read_input(char* filename, char** key, char** message) {
+        FILE* input_file = fopen(filename,"r");
+        if (!input_file){
+            printf("Error: Unable to open input file.\n");
+            exit(1);
+        }
 
-int main(){
+        // Allocate memory for key and message
+        *key = malloc(100 * sizeof(char));
+        *message = malloc(100 * sizeof(char));
 
-    char key[100];
-    char message[100];
-    char encrypted[100];
-    char decrypted[100];
+        // Read in key and message
+        if (fgets(*key, 100, input_file) == NULL) {
+            printf("Error: Unable to read key from input file.\n");
+            exit(1);
+        }
+        if (fgets(*message, 100, input_file) == NULL) {
+            printf("Error: Unable to read message from input file.\n");
+            exit(1);
+        }
 
-    //open input.txt for input reading
-    FILE* input_file = fopen("input.txt","r");
-    if (!input_file){
-        printf("Error: Unable to open input file.\n");
-        return 1;
+        // Remove newline characters from key and message
+        (*key)[strcspn(*key, "\n")] = 0;
+        (*message)[strcspn(*message, "\n")] = 0;
+
+        fclose(input_file);
     }
-    //read the first line of text, and set it to the key. 
-    //Note: The key may contain spaces, so use fgets instead of fscanf.
-    //however, if spaces are indeed intentional, this code will fail the test case. 
-    //I will write my code assuming that the should not contain spaces. 
-    fgets(key,100,input_file);
-    //append a null terminator to the position of the newline of the key. 
-    key[strcspn(key, "\n")] = 0;
-    //printf("Key: [%s]\n",key);
-    //The next line will be the message. 
-    fgets(message, 100, input_file);
-    //append a null terminator to the position of the newline to the message.
-    message[strcspn(message, "\n")] = 0;
-   // printf("Message: [%s]\n",message);
+
+
+int vigenere(char* key, char* message, char* encrypted, char* decrypted){
+    //open input.txt
+    read_input("input.txt", key, message);
     //if the key has length of 0, throw an invalid key error. 
     if (strlen(key) <= 0){
         printf("Error: Invalid Key.\n");
-        //close input.txt
-        fclose(input_file);
         return 1; 
     }
 
     //if the message has a length of 0, OR contains any non-lowercase characters, throw an invalid message error. 
     if (strlen(message) <= 0){
         printf("Error: Invalid message.\n");
-        //close input.txt
-        fclose(input_file);
         return 1; 
     }
 
@@ -90,8 +93,6 @@ int main(){
         {
             //if we get in here we throw errors broski
             printf("Error: b Invalid message. Character [%c], on index %d, is invalid.\n", message[i], i);
-            //close input.txt
-            fclose(input_file);
             return 1; 
         }
     }
@@ -162,6 +163,46 @@ int main(){
 
 
     //close input.txt
-    fclose(input_file);
+    //fclose(input_file);
+    return 0;
+}
+
+void test_vigenere(){
+  char encrypted[100];
+  char decrypted[100];
+  
+  
+  // Test with valid key and message
+    char* key1 = "key";
+    char* message1 = "message";
+    assert(vigenere(key1, message1, encrypted, decrypted) == 0);
+
+    // Test with empty key
+    char* key2 = "";
+    char* message2 = "message";
+    assert(vigenere(key2, message2, encrypted, decrypted) == 1);
+
+    // Test with empty message
+    char* key3 = "key";
+    char* message3 = "";
+    assert(vigenere(key3, message3, encrypted, decrypted) == 1);
+
+    // Test with non-lowercase characters in message
+    char* key4 = "key";
+    char* message4 = "Message";
+    assert(vigenere(key4, message4, encrypted, decrypted) == 1);
+
+    // Test with non-alphabetic characters in key
+    char* key5 = "k3y";
+    char* message5 = "message";
+    assert(vigenere(key5, message5, encrypted, decrypted) == 1);
+}
+
+
+
+int main() {
+
+    test_vigenere();
+
     return 0;
 }
