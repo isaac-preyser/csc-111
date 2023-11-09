@@ -96,8 +96,12 @@ int main(){
         }
     }
 //if we get here, we can rest assured both the message and the key are valid. 
+    printf("Message: [%s]\n",message);
+    printf("Key: [%s]\n",key);
+    
+    
+    
     //encyrpt the message, using the vigenere cipher.
-
     //expand the key to repeat itself for the length of the message. 
     int key_counter = 0;
     for (int i = 0; i < strlen(message); i++){
@@ -110,7 +114,8 @@ int main(){
         //increment the counter
         key_counter++;
     }
-
+    //when we get to the end, append a null terminator at the last position of the string. 
+    key[strcspn(key, "\n")] = 0;
     //encrypt the message
     //this is really just adding the index of the key to the index of the message, and then modding by 26.
     for (int i = 0; i < strlen(message); i++){
@@ -118,29 +123,31 @@ int main(){
         encrypted[i] = index_to_character((character_to_index(message[i]) + character_to_index(key[i])) % 26);
     }
     //append a null terminator to the position of the newline to the encrypted message.
-    encrypted[strcspn(encrypted, "\n")] = 0;
+    encrypted[strlen(message)] = 0;
 
     //decrypt the message
     //lets convert the each character of the encypted message back to the index. 
-    for (int i = 0; i < strlen(encrypted); i ++){
+    for (int i = 0; i < strlen(message); i ++){
         //start by converting each character of encrypted to the index.
-        int encrypted_index = character_to_index(encrypted[i]);
+        int message_index = character_to_index(message[i]);
         //next, convert the corresponding character of the key to the index. 
         int key_index = character_to_index(key[i]);
         //now, we will subtract the key index from the encrypted index.
-        int decrypted_index = (encrypted_index - key_index);
+        int decrypted_index = (message_index - key_index);
         //if the decrypted index is negative, we will add 26 to it.
+        //printf("%d, ", decrypted_index);
         if (decrypted_index < 0){
             decrypted_index += 26;
         }
         //now, we will mod the decrypted index by 26.
         decrypted_index = decrypted_index % 26;
-      //  printf("%d\n", decrypted_index);
+        //printf("%d\n", decrypted_index);
         //convert this index to a character and save it to the decrypted buffer
         decrypted[i] = index_to_character(decrypted_index);
 
     }
-
+    //append a null terminator at the last position of the decrypted string
+    decrypted[strlen(message)] = 0;
 
 
 
@@ -155,8 +162,7 @@ int main(){
 
     //You can reuse this print statements in your solution (assuming you store each string
     //in the same variables).
-    printf("Message: [%s]\n",message);
-    printf("Key: [%s]\n",key);
+   
     printf("Encrypted: [%s]\n",encrypted);
     printf("Decrypted: [%s]\n",decrypted);
 
