@@ -44,10 +44,10 @@ int character_to_index(char ch){
 
 int main(){
 
-    char key[100];
-    char message[100];
-    char encrypted[100];
-    char decrypted[100];
+    char key[101];
+    char message[101];
+    char encrypted[101];
+    char decrypted[101];
 
     //open input.txt for input reading
     FILE* input_file = fopen("input.txt","r");
@@ -74,6 +74,17 @@ int main(){
         //close input.txt
         fclose(input_file);
         return 1; 
+    }
+     for (int i = 0; i < strlen(key); i++){
+        //this might walk off the end of the string, I have no idea
+        if (islower(key[i]) == 0)
+        {
+            //if we get in here we throw errors broski, key isnt right
+            printf("Error: Invalid key.\n");
+            //close input.txt
+            fclose(input_file);
+            return 1; 
+        }
     }
 
     //if the message has a length of 0, OR contains any non-lowercase characters, throw an invalid message error. 
