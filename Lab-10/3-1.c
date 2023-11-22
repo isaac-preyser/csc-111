@@ -21,7 +21,7 @@ void print_order(Order the_order){
     printf("Order %3d: Placed by %s on %2d/%2d/%4d (price: $%.02f)\n",
     the_order.order_number,
     the_order.customer_name,
-    the_order.order_date.day, the_order.order_date.month, the_order.order_date.year,
+    the_order.order_date.month, the_order.order_date.day, the_order.order_date.year,
     the_order.total_price);
 }
 /* create_order(order_number, year, month, day, customer_name, price)
