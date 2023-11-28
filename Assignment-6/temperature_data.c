@@ -26,7 +26,7 @@
 int read_observation(FILE* input_file, Observation* obs){
     /* Your code here */
     //lets try to scanf the first observation, and if it fails return 0. else return 1
-      if (fscanf(input_file, "%d %d %d %d %d %d %f", &obs->station_number, &obs->year, &obs->month, &obs->day, &obs->hour, &obs->minute, &obs->temperature) != 7){
+      if (fscanf(input_file, "%d %d %d %d %d %d %lf", &obs->station_id, &obs->obs_date.year, &obs->obs_date.month, &obs->obs_date.day, &obs->hour, &obs->minute, &obs->temperature) != 7){
          return 0;
       } else{
          return 1;
@@ -132,19 +132,30 @@ int load_all_observations(char filename[], int array_size, Observation observati
 */
 void print_station_extremes(int num_observations, Observation obs_array[num_observations]){
     /* Your code here */
-    //we are gonna loop over the array, saving the value of each iteration if, and only if, the value of the iteration is greater than the saved value. 
-    double max = obs_array[0].temperature;
-    double min = obs_array[0].temperature;
-    for (int i = 0; i < num_observations; i++){
-      //if the value of the current iteration is greater than the saved value, save it
-      if (obs_array[i].temperature > saved){
-         saved = obs_array[i].temperature;
+   int current_station = obs_array[0].station_id;
+   double min_temp = obs_array[0].temperature;
+   double max_temp = obs_array[0].temperature;
+   Date min_date = obs_array[0].obs_date;
+   Date max_date = obs_array[0].obs_date;
+   for (int i = 1; i < num_observations; i++){
+      if (obs_array[i].station_id == current_station){
+         if (obs_array[i].temperature < min_temp){
+            min_temp = obs_array[i].temperature;
+            min_date = obs_array[i].obs_date;
+         }
+         if (obs_array[i].temperature > max_temp){
+            max_temp = obs_array[i].temperature;
+            max_date = obs_array[i].obs_date;
+         }
+      } else{
+         printf("Station %d: Minimum = %.2f degrees (%04d-%02d-%02d %02d:%02d), Maximum = %.2f degrees (%04d-%02d-%02d %02d:%02d)\n", current_station, min_temp, min_date.year, min_date.month, min_date.day, obs_array[i].hour, obs_array[i].minute, max_temp, max_date.year, max_date.month, max_date.day, obs_array[i].hour, obs_array[i].minute);
+         current_station = obs_array[i].station_id;
+         min_temp = obs_array[i].temperature;
+         max_temp = obs_array[i].temperature;
+         min_date = obs_array[i].obs_date;
+         max_date = obs_array[i].obs_date;
       }
-      if (obs_array[i].temperature < saved){
-         saved = obs_array[i].temperature;
-      }
-    }
-    
+   }
 }
 
 /* print_daily_averages(num_observations, obs_array)
@@ -175,4 +186,6 @@ void print_station_extremes(int num_observations, Observation obs_array[num_obse
 */
 void print_daily_averages(int num_observations, Observation obs_array[num_observations]){
     /* Your code here */
+   
+  
 }
