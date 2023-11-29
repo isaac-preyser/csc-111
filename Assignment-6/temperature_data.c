@@ -25,11 +25,14 @@
 */
 int read_observation(FILE* input_file, Observation* obs){
     /* Your code here */
+    printf("Attempting to read observation\n");
     //lets try to scanf the first observation, and if it fails return 0. else return 1
-      if (fscanf(input_file, "%d %d %d %d %d %d %lf", &obs->station_id, &obs->obs_date.year, &obs->obs_date.month, &obs->obs_date.day, &obs->hour, &obs->minute, &obs->temperature) != 7){
-         return 0;
-      } else{
+      if (fscanf(input_file, "%d %d %d %d %d %d %lf", &obs->obs_date.year, &obs->obs_date.month, &obs->obs_date.day, &obs->hour, &obs->minute, &obs->station_id, &obs->temperature) == 7){
+         printf("Read: Year: %d Month: %d Day: %d Hour: %d Minute: %d Station ID: %d Temperature: %lf\n", obs->obs_date.year, obs->obs_date.month, obs->obs_date.day, obs->hour, obs->minute, obs->station_id, obs->temperature);
          return 1;
+      } else{
+         printf("Failed to read full observation\n");
+         return 0;
       }
     
 }
@@ -86,9 +89,13 @@ int load_all_observations(char filename[], int array_size, Observation observati
          FILE* input_file = fopen(filename, "r");
          int count = 0;
          Observation obs;
-         while (read_observation(input_file, &obs) == 1 && count < array_size){
-               observation_array[count] = obs;
+         for (int i = 0; i < array_size; i++){
+            if (read_observation(input_file, &obs) == 1){
+               observation_array[i] = obs;
                count++;
+            } else{
+               break;
+            }
          }
          fclose(input_file);
          return count;
@@ -186,6 +193,23 @@ void print_station_extremes(int num_observations, Observation obs_array[num_obse
 */
 void print_daily_averages(int num_observations, Observation obs_array[num_observations]){
     /* Your code here */
-   
+   //loop over the array and find the average for each day. loop over the array again, and if there is another observation for that day, add it to the average for the day. continue checking until there are no more observations for that day, and then print the average. 
+   Date current_date = obs_array[0].obs_date;
+   double total_temp = obs_array[0].temperature;
+   int count = 1;
+   for (int i = 1; i < num_observations; i++){
+      if (obs_array[i].obs_date.year == current_date.year && obs_array[i].obs_date.month == current_date.month && obs_array[i].obs_date.day == current_date.day){
+         total_temp += obs_array[i].temperature;
+         count++;
+      } else{
+         double average = total_temp/count;
+         printf("%d %d %d %.2f\n", current_date.year, current_date.month, current_date.day, average);
+         current_date = obs_array[i].obs_date;
+         total_temp = obs_array[i].temperature;
+         count = 1;
+      }
+   }
+   double average = total_temp/count;
+   printf("%d %d %d %.2f\n", current_date.year, current_date.month, current_date.day, average);
   
 }

@@ -9,7 +9,9 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "a6_tester_all.c",
+                "temperature_data.c"
             ],
             "options": {
                 "cwd": "${fileDirname}"
@@ -29,7 +31,9 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}"
+                "${fileDirname}/${fileBasenameNoExtension}", 
+                "a6_tester_all.c",
+                "temperature_data.c"
             ],
             "options": {
                 "cwd": "${fileDirname}"
