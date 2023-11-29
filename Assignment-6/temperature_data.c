@@ -25,13 +25,13 @@
 */
 int read_observation(FILE* input_file, Observation* obs){
     /* Your code here */
-    printf("Attempting to read observation\n");
+    //printf("Attempting to read observation\n");
     //lets try to scanf the first observation, and if it fails return 0. else return 1
       if (fscanf(input_file, "%d %d %d %d %d %d %lf", &obs->obs_date.year, &obs->obs_date.month, &obs->obs_date.day, &obs->hour, &obs->minute, &obs->station_id, &obs->temperature) == 7){
-         printf("Read: Year: %d Month: %d Day: %d Hour: %d Minute: %d Station ID: %d Temperature: %lf\n", obs->obs_date.year, obs->obs_date.month, obs->obs_date.day, obs->hour, obs->minute, obs->station_id, obs->temperature);
+       //  printf("Read: Year: %d Month: %d Day: %d Hour: %d Minute: %d Station ID: %d Temperature: %lf\n", obs->obs_date.year, obs->obs_date.month, obs->obs_date.day, obs->hour, obs->minute, obs->station_id, obs->temperature);
          return 1;
       } else{
-         printf("Failed to read full observation\n");
+      //   printf("Failed to read full observation\n");
          return 0;
       }
     
@@ -97,6 +97,41 @@ int load_all_observations(char filename[], int array_size, Observation observati
                break;
             }
          }
+         //sort the observation_array by date. I hate this implementation. If the year is bigger, swap the two. If the year is the same, check the month. If the month is bigger, swap the two. If the month is the same, check the day. If the day is bigger, swap the two. If the day is the same, check the hour. If the hour is bigger, swap the two. If the hour is the same, check the minute. If the minute is bigger, swap the two.
+         //it would probably be more concise to make some arbitrary value that is the date in minutes, and then sort by that, but whatever. 
+         for (int i = 0; i < count; i++){
+            for (int j = 0; j < count; j++){
+               if (observation_array[i].obs_date.year < observation_array[j].obs_date.year){
+                  Observation temp = observation_array[i];
+                  observation_array[i] = observation_array[j];
+                  observation_array[j] = temp;
+               } else if (observation_array[i].obs_date.year == observation_array[j].obs_date.year){
+                  if (observation_array[i].obs_date.month < observation_array[j].obs_date.month){
+                     Observation temp = observation_array[i];
+                     observation_array[i] = observation_array[j];
+                     observation_array[j] = temp;
+                  } else if (observation_array[i].obs_date.month == observation_array[j].obs_date.month){
+                     if (observation_array[i].obs_date.day < observation_array[j].obs_date.day){
+                        Observation temp = observation_array[i];
+                        observation_array[i] = observation_array[j];
+                        observation_array[j] = temp;
+                     } else if (observation_array[i].obs_date.day == observation_array[j].obs_date.day){
+                        if (observation_array[i].hour < observation_array[j].hour){
+                           Observation temp = observation_array[i];
+                           observation_array[i] = observation_array[j];
+                           observation_array[j] = temp;
+                        } else if (observation_array[i].hour == observation_array[j].hour){
+                           if (observation_array[i].minute < observation_array[j].minute){
+                              Observation temp = observation_array[i];
+                              observation_array[i] = observation_array[j];
+                              observation_array[j] = temp;
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
          fclose(input_file);
          return count;
       }
@@ -137,31 +172,66 @@ int load_all_observations(char filename[], int array_size, Observation observati
    Return value: None
    Side Effect: A printed representation of station extremes is output to the user.
 */
+
+
 void print_station_extremes(int num_observations, Observation obs_array[num_observations]){
-    /* Your code here */
-   int current_station = obs_array[0].station_id;
-   double min_temp = obs_array[0].temperature;
-   double max_temp = obs_array[0].temperature;
-   Date min_date = obs_array[0].obs_date;
-   Date max_date = obs_array[0].obs_date;
-   for (int i = 1; i < num_observations; i++){
-      if (obs_array[i].station_id == current_station){
-         if (obs_array[i].temperature < min_temp){
-            min_temp = obs_array[i].temperature;
-            min_date = obs_array[i].obs_date;
+   Observation null_obs = {{0, 0, 0}, 0, 0, 0, 0.0};
+   Observation min_obs = null_obs;
+   Observation max_obs = null_obs; 
+   int completed_stations[num_observations];
+   //sort the observation_array by station_id, so the outputs will be in order.
+   for (int i = 0; i < num_observations; i++){
+      for (int j = 0; j < num_observations; j++){
+         if (obs_array[i].station_id < obs_array[j].station_id){
+            Observation temp = obs_array[i];
+            obs_array[i] = obs_array[j];
+            obs_array[j] = temp;
          }
-         if (obs_array[i].temperature > max_temp){
-            max_temp = obs_array[i].temperature;
-            max_date = obs_array[i].obs_date;
-         }
-      } else{
-         printf("Station %d: Minimum = %.2f degrees (%04d-%02d-%02d %02d:%02d), Maximum = %.2f degrees (%04d-%02d-%02d %02d:%02d)\n", current_station, min_temp, min_date.year, min_date.month, min_date.day, obs_array[i].hour, obs_array[i].minute, max_temp, max_date.year, max_date.month, max_date.day, obs_array[i].hour, obs_array[i].minute);
-         current_station = obs_array[i].station_id;
-         min_temp = obs_array[i].temperature;
-         max_temp = obs_array[i].temperature;
-         min_date = obs_array[i].obs_date;
-         max_date = obs_array[i].obs_date;
       }
+   }
+   
+   for (int i = 0; i < num_observations; i++){
+      completed_stations[i] = 255; //255 is NOT within the allowable range, and therefore no stations can be equal to it. 
+   } 
+   int completed_index = 0; //might need to be zero
+
+   for (int i = 0; i < num_observations; i++){
+    //if the current station_id is within our completed_stations array, continue; the for loop, skipping that data entry. 
+    
+      int station_id = obs_array[i].station_id;
+      int station_completed = 0;
+      for (int j = 0; j < completed_index; j++){
+         if (completed_stations[j] == station_id){
+            station_completed = 1;
+            break;
+         }
+      }
+      if (station_completed == 1){
+         continue;
+      }
+      //if the current station_id is not within our completed_stations array, add it to the array. 
+      completed_stations[completed_index] = station_id;
+      completed_index++;
+      max_obs = obs_array[i];
+      min_obs = obs_array[i];
+      //now we need to find the min and max for the current station_id. 
+      //loop over the array, and if the current station_id is equal to the station_id of the current observation, 
+      //check if the current observation is greater than the max_obs or less than the min_obs. 
+      //if it is, set the max_obs or min_obs to the current observation. 
+      for (int j = 0; j < num_observations; j++){
+         if (obs_array[j].station_id == station_id){
+            if (obs_array[j].temperature > max_obs.temperature){
+               max_obs = obs_array[j];
+            }
+            if (obs_array[j].temperature < min_obs.temperature){
+               min_obs = obs_array[j];
+            }
+         }
+      }
+      //now we have the min and max for the current station_id. lets print it out.
+      printf("Station %d: Minimum = %.2f degrees (%04d-%02d-%02d %02d:%02d), Maximum = %.2f degrees (%04d-%02d-%02d %02d:%02d)\n", station_id, min_obs.temperature, min_obs.obs_date.year, min_obs.obs_date.month, min_obs.obs_date.day, min_obs.hour, min_obs.minute, max_obs.temperature, max_obs.obs_date.year, max_obs.obs_date.month, max_obs.obs_date.day, max_obs.hour, max_obs.minute);
+      
+  
    }
 }
 
@@ -203,13 +273,13 @@ void print_daily_averages(int num_observations, Observation obs_array[num_observ
          count++;
       } else{
          double average = total_temp/count;
-         printf("%d %d %d %.2f\n", current_date.year, current_date.month, current_date.day, average);
+         printf("%d %d %d %.1f\n", current_date.year, current_date.month, current_date.day, average);
          current_date = obs_array[i].obs_date;
          total_temp = obs_array[i].temperature;
          count = 1;
       }
    }
    double average = total_temp/count;
-   printf("%d %d %d %.2f\n", current_date.year, current_date.month, current_date.day, average);
+   printf("%d %d %d %.1f\n", current_date.year, current_date.month, current_date.day, average);
   
 }
