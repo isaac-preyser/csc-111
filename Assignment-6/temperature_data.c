@@ -58,7 +58,11 @@ int count_observations(char filename[]){
         while (read_observation(input_file, &obs) == 1){
             count++;
         }
-        fclose(input_file);
+        if (fclose(input_file) != 0) {
+            //printf("Error: Unable to close the file.\n");
+         } else {
+            //printf("File closed successfully.\n");
+         }
         return count;
     }
 }
@@ -98,8 +102,11 @@ int load_all_observations(char filename[], int array_size, Observation observati
                break;
             }
          }
-         fclose(input_file);
-         //fclose(input_file);
+         if (fclose(input_file) != 0) {
+            //printf("Error: Unable to close the file.\n");
+         } else {
+            //printf("File closed successfully.\n");
+         }
          return count;
       }
 }
