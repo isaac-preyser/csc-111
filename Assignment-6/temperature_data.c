@@ -84,6 +84,7 @@ int count_observations(char filename[]){
 int load_all_observations(char filename[], int array_size, Observation observation_array[array_size]){
     /* Your code here */
       if (fopen(filename, "r") == NULL){
+         //we failed to open the file
          return -1;
       } else{
          FILE* input_file = fopen(filename, "r");
@@ -97,42 +98,8 @@ int load_all_observations(char filename[], int array_size, Observation observati
                break;
             }
          }
-         //sort the observation_array by date. I hate this implementation. If the year is bigger, swap the two. If the year is the same, check the month. If the month is bigger, swap the two. If the month is the same, check the day. If the day is bigger, swap the two. If the day is the same, check the hour. If the hour is bigger, swap the two. If the hour is the same, check the minute. If the minute is bigger, swap the two.
-         //it would probably be more concise to make some arbitrary value that is the date in minutes, and then sort by that, but whatever. 
-         for (int i = 0; i < count; i++){
-            for (int j = 0; j < count; j++){
-               if (observation_array[i].obs_date.year < observation_array[j].obs_date.year){
-                  Observation temp = observation_array[i];
-                  observation_array[i] = observation_array[j];
-                  observation_array[j] = temp;
-               } else if (observation_array[i].obs_date.year == observation_array[j].obs_date.year){
-                  if (observation_array[i].obs_date.month < observation_array[j].obs_date.month){
-                     Observation temp = observation_array[i];
-                     observation_array[i] = observation_array[j];
-                     observation_array[j] = temp;
-                  } else if (observation_array[i].obs_date.month == observation_array[j].obs_date.month){
-                     if (observation_array[i].obs_date.day < observation_array[j].obs_date.day){
-                        Observation temp = observation_array[i];
-                        observation_array[i] = observation_array[j];
-                        observation_array[j] = temp;
-                     } else if (observation_array[i].obs_date.day == observation_array[j].obs_date.day){
-                        if (observation_array[i].hour < observation_array[j].hour){
-                           Observation temp = observation_array[i];
-                           observation_array[i] = observation_array[j];
-                           observation_array[j] = temp;
-                        } else if (observation_array[i].hour == observation_array[j].hour){
-                           if (observation_array[i].minute < observation_array[j].minute){
-                              Observation temp = observation_array[i];
-                              observation_array[i] = observation_array[j];
-                              observation_array[j] = temp;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
          fclose(input_file);
+         //fclose(input_file);
          return count;
       }
 }
@@ -214,20 +181,62 @@ void print_station_extremes(int num_observations, Observation obs_array[num_obse
       completed_index++;
       max_obs = obs_array[i];
       min_obs = obs_array[i];
-      //now we need to find the min and max for the current station_id. 
-      //loop over the array, and if the current station_id is equal to the station_id of the current observation, 
-      //check if the current observation is greater than the max_obs or less than the min_obs. 
-      //if it is, set the max_obs or min_obs to the current observation. 
-      for (int j = 0; j < num_observations; j++){
+      //now we have the first observation for the current station_id. lets find the min and max for that station_id. 
+      for (int j = i; j < num_observations; j++){
          if (obs_array[j].station_id == station_id){
-            if (obs_array[j].temperature > max_obs.temperature){
-               max_obs = obs_array[j];
-            }
             if (obs_array[j].temperature < min_obs.temperature){
                min_obs = obs_array[j];
             }
+            if (obs_array[j].temperature > max_obs.temperature){
+               max_obs = obs_array[j];
+            }
+            //if the temp is equal, check if the date is earlier, and if it is, set the date to the earlier one.
+            if (obs_array[j].temperature == min_obs.temperature){
+               if (obs_array[j].obs_date.year < min_obs.obs_date.year){
+                  min_obs = obs_array[j];
+               } else if (obs_array[j].obs_date.year == min_obs.obs_date.year){
+                  if (obs_array[j].obs_date.month < min_obs.obs_date.month){
+                     min_obs = obs_array[j];
+                  } else if (obs_array[j].obs_date.month == min_obs.obs_date.month){
+                     if (obs_array[j].obs_date.day < min_obs.obs_date.day){
+                        min_obs = obs_array[j];
+                     } else if (obs_array[j].obs_date.day == min_obs.obs_date.day){
+                        if (obs_array[j].hour < min_obs.hour){
+                           min_obs = obs_array[j];
+                        } else if (obs_array[j].hour == min_obs.hour){
+                           if (obs_array[j].minute < min_obs.minute){
+                              min_obs = obs_array[j];
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+            //we must do this again for the max_obs, because we want the earliest date for the max_obs as well.
+            if (obs_array[j].temperature == max_obs.temperature){
+               if (obs_array[j].obs_date.year < max_obs.obs_date.year){
+                  max_obs = obs_array[j];
+               } else if (obs_array[j].obs_date.year == max_obs.obs_date.year){
+                  if (obs_array[j].obs_date.month < max_obs.obs_date.month){
+                     max_obs = obs_array[j];
+                  } else if (obs_array[j].obs_date.month == max_obs.obs_date.month){
+                     if (obs_array[j].obs_date.day < max_obs.obs_date.day){
+                        max_obs = obs_array[j];
+                     } else if (obs_array[j].obs_date.day == max_obs.obs_date.day){
+                        if (obs_array[j].hour < max_obs.hour){
+                           max_obs = obs_array[j];
+                        } else if (obs_array[j].hour == max_obs.hour){
+                           if (obs_array[j].minute < max_obs.minute){
+                              max_obs = obs_array[j];
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
+     
       //now we have the min and max for the current station_id. lets print it out.
       printf("Station %d: Minimum = %.2f degrees (%04d-%02d-%02d %02d:%02d), Maximum = %.2f degrees (%04d-%02d-%02d %02d:%02d)\n", station_id, min_obs.temperature, min_obs.obs_date.year, min_obs.obs_date.month, min_obs.obs_date.day, min_obs.hour, min_obs.minute, max_obs.temperature, max_obs.obs_date.year, max_obs.obs_date.month, max_obs.obs_date.day, max_obs.hour, max_obs.minute);
       
@@ -261,25 +270,63 @@ void print_station_extremes(int num_observations, Observation obs_array[num_obse
    Side Effect: A printed representation of the average daily temperature is
                 output to the user.
 */
+typedef struct{
+   Date date;
+   int count; //total of how many observations there are for this day. 
+   double total_temperature;
+} Average;
+
 void print_daily_averages(int num_observations, Observation obs_array[num_observations]){
     /* Your code here */
-   //loop over the array and find the average for each day. loop over the array again, and if there is another observation for that day, add it to the average for the day. continue checking until there are no more observations for that day, and then print the average. 
-   Date current_date = obs_array[0].obs_date;
-   double total_temp = obs_array[0].temperature;
-   int count = 1;
-   for (int i = 1; i < num_observations; i++){
-      if (obs_array[i].obs_date.year == current_date.year && obs_array[i].obs_date.month == current_date.month && obs_array[i].obs_date.day == current_date.day){
-         total_temp += obs_array[i].temperature;
-         count++;
-      } else{
-         double average = total_temp/count;
-         printf("%d %d %d %.1f\n", current_date.year, current_date.month, current_date.day, average);
-         current_date = obs_array[i].obs_date;
-         total_temp = obs_array[i].temperature;
-         count = 1;
+   //sort the observations by date, from earliest to latest.
+   for (int i = 0; i < num_observations; i++){
+      for (int j = 0; j < num_observations; j++){
+         if (obs_array[i].obs_date.year < obs_array[j].obs_date.year){
+            Observation temp = obs_array[i];
+            obs_array[i] = obs_array[j];
+            obs_array[j] = temp;
+         } else if (obs_array[i].obs_date.year == obs_array[j].obs_date.year){
+            if (obs_array[i].obs_date.month < obs_array[j].obs_date.month){
+               Observation temp = obs_array[i];
+               obs_array[i] = obs_array[j];
+               obs_array[j] = temp;
+            } else if (obs_array[i].obs_date.month == obs_array[j].obs_date.month){
+               if (obs_array[i].obs_date.day < obs_array[j].obs_date.day){
+                  Observation temp = obs_array[i];
+                  obs_array[i] = obs_array[j];
+                  obs_array[j] = temp;
+               }
+            }
+         }
       }
    }
-   double average = total_temp/count;
-   printf("%d %d %d %.1f\n", current_date.year, current_date.month, current_date.day, average);
+   //find the average temperature for each day.
+   Average averages[num_observations];
+   int averages_index = 0;
+   for (int i = 0; i < num_observations; i++){
+      int date_found = 0;
+      for (int j = 0; j < averages_index; j++){
+         if (obs_array[i].obs_date.year == averages[j].date.year && obs_array[i].obs_date.month == averages[j].date.month && obs_array[i].obs_date.day == averages[j].date.day){
+            averages[j].count++;
+            averages[j].total_temperature += obs_array[i].temperature;
+            date_found = 1;
+            break;
+         }
+      }
+      if (date_found == 0){
+         Average new_average;
+         new_average.date = obs_array[i].obs_date;
+         new_average.count = 1;
+         new_average.total_temperature = obs_array[i].temperature;
+         averages[averages_index] = new_average;
+         averages_index++;
+      }
+   }
+   //print the averages.
+   for (int i = 0; i < averages_index; i++){
+      double average = averages[i].total_temperature / averages[i].count;
+      printf("%04d %d %d %.1f\n", averages[i].date.year, averages[i].date.month, averages[i].date.day, average);
+   }
+
   
 }
